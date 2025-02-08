@@ -45,8 +45,7 @@ a.link {
     border-bottom-width: 2px;
     border-bottom-style: solid;
     border-bottom-color: var(--grey-700);
-    transition: border-bottom-color 0.2s ease-in-out;
-    transition: color 0.2s ease-in-out;
+    transition: border-bottom-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
 a.link:hover {
@@ -61,4 +60,35 @@ a.link:hover {
     margin: 0 auto;
     max-width: 650px;
     width: 100%;
+}
+
+
+.section {
+    margin-top: 50px;
+}
+
+
+.footer {
+    border-top: 1px solid #252525;
+    padding: 16px 0;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+    margin: 0.4rem 0;
+}
+
+.svg-wrapper {
+    position: relative;
+    left: -50px;
+    right: -50px;
+    height: 60px;
+    overflow: visible;
+}
+
+#string {
+    fill: none;
+    stroke: white;
+    stroke-width: 3;
 }
