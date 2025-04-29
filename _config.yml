@@ -1,0 +1,37 @@
+title: ilyb  # Your name for the top bar
+description: Your website description
+author: ayj
+theme: minima # Or any other Jekyll theme you like (you can customize it later)
+github_username: ilyb1729 # Optional, for GitHub integration
+
+markdown: kramdown # Recommended for MathJax support
+kramdown:
+  math_engine: mathjax
+  syntax_highlighter: rouge # Or pygments
+
+plugins:
+  - jekyll-feed # For generating an RSS feed (optional)
+
+# Exclude these files from being processed by Jekyll
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Set permalink style for blog posts (optional, but good for SEO)
+permalink: /:title/
+
+# GitHub Pages settings (adjust based on your repo name)
+baseurl: "" # Use "/your-repo-name" if your site is at your-github-username.github.io/your-repo-name
+url: "https://ilyb1729.github.io" # Your full website URL
+
+# Customize build options
+defaults:
+  - scope:
+      path: "_posts"
+    values:
+      layout: "post" # Specify a default layout for posts (we'll create this later)

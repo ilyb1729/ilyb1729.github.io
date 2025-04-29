@@ -1,0 +1,59 @@
+---
+layout: post
+title: CS444 Reflections
+date: 2025-04-29 08:20:00 -0700
+categories: [] # Optional categories
+tags: [] # Optional tags
+---
+
+For a class, I developed a compiler for a subset of Java to x86 in a group of three team members.
+
+Notably, the compiler does not support generics, exception handling, or concurrency, and I did not write many optimizations, so I am not sure that I would really consider it a compiler. I ended up writing a lot of the front-end along with a small, trivial bit of the back-end and register allocation.
+
+I was hoping to leave some reflections so that some day I could come back knowing that I resolved the sins that I have committed during this project. (I got too lazy to leave some analysis of design choices, but that exists in our technical report already).
+
+### Lines of code
+
+In first year, I had read thume's write-up about his compiler which was what inspired me to want to take this class (along with my later interest in programming languages).
+
+When they took the class, they collected counts of LOC from his group along with other groups and used the differences to speculate about the importance of design and expressiveness of the programming language.
+
+Using cloc, our compiler front-end without files specifying the lexer and parser was ~4k LOC and our back-end without a few optional optimizations that a group-mate wrote was ~1k LOC.
+
+First, our back-end was remarkably concise. My group-mate decided to deviate quite far from what was covered in class and they are very skilled at analyzing what a problem really is. This lead to short code. Props to them.
+
+Now, our front-end was slightly larger than thume's. However, their assignment was different because they were not allowed to use lexer or parser generators. If we had to implement these, I imagine that our compiler would be much longer! So I am a disappointed in how I wrote the front-end as poor design, shortcuts, duplicated code, and never-implemented TODOs (future me please solve) definitely contributed to technical debt and the length of the front-end.
+
+Concretely, my biggest curiosity is if we went from the functional pattern matching over trees to the visitor design pattern, would this reduce the amount of code and make the design better? It was hard to have the foresight that every traversal over the AST would be in the same order, so this is definitely possible.
+
+Another source of extra lines were that I wanted to keep a redundant traversal to pass regression tests (~100 loc). There were probably \~200 loc from redundant code that could've been factored out. I also probably could have got rid of \~100 loc of types that I kept around due to a lack of foresight though I also could have had a lot more lines of code for types. Most of the issue was in design I think.
+
+It is nice to know that I was able to produce a somewhat similar project to someone that I had looked up to, but there is still clearly a large gap in our skills. More to learn!
+
+### Time spent
+
+The professor suggested that he expected each group to have spent ~100 hours on the project throughout the semester. I do not think I have hit this target.
+
+I struggle a lot with time estimates. Right now I just work on things until they get done. But my focus is not the greatest, so when I am working on school it is hazy when I am working and when I am distracted.
+
+Also at this point I have accepted that things take me longer than it takes other people to code, but this might actively be harming my progress since I think that accepting mediocrity is not good.
+
+### Ocaml
+
+The language was quite a pleasure to work in and reaffirmed my desire to spend more time using functional programming languages.
+
+The only sharp edge I ran against was when I tried to use more efficient imperative data structures and combined them with closures without completely understanding them which led to multiple references to the same data structure and took a long time to debug. I need to spend some time studying the model for how this is actually handled, probably by reading the compiler.
+
+Additionally, the types were extremely helpful when I wanted to refactor things because I was almost certain that I could add a case to the type and the compiler would point me to every place that would have to be changed.
+
+On a only somewhat related tangent, it seems like JS is intending to add more features to use the stack to allow for greater manual optimization in ocaml. I personally think that starting from a functional language and adding more imperative-like ways to optimize is better than starting with an imperative language and adding functional features. Thus, if this really happens, I might prefer just spending more time in Ocaml rather than Rust.
+
+Expect writing about functional programming in the future!
+
+### Testing
+
+Testing was kind of rough for this project and a major aspect that I am hoping to work more on in the future. My knowledge of tools for testing is clearly very limited.
+
+Writing manual tests are a huge burden (but an absolutely core part of the process) and I need to think about ways to force myself into test driven development. This issue is also somewhat tied to the large PRs I wrote. I really need to put a lot more work into careful planning.
+
+Another random tangent, I read about a team at Amazon (Cedar) that has a formally verified version of the code in Lean and then an optimized version in Rust. Then, they would fuzz test cases to make sure that the behavior between the two matched (I might be misremembering). This sounds interesting and I need to invest some more time into thinking how effective this is. My current opinion is that in an ideal world, writing everything in theorem provers would be superior to testing because testing can only prove your code wrong, not right. However, I think more industry experience will shift my perspective on it. I do think that if someone would be able to make theorem proving a lot cheaper and more accessible, this could be an empire in the future.

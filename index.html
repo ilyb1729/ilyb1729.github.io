@@ -1,44 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
+---
+layout: default
+title: Blog # Optional: Set a title for the blog listing page
+---
 
-<head>
-    <meta charset="UTF-8">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-    <title>Ataraxy</title>
-    <link rel="stylesheet" href="/main.css">
-    <link rel="preconnect" href="https://rsms.me/">
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-</head>
+<div class="posts-list">
+    {% for post in site.posts %}
+    <article class="post-preview">
+        <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+        <p class="post-meta">{{ post.date | date: "%B %d, %Y" }}</p>
 
-<body>
-    <div class="container">
-        <h1 class="header">
-            Hi, I'm Richard
-        </h1>
-        <div class="about">
-            <div class="section">
-                <p>I enjoy pretty pictures and I am trying to get good at programming.</p>
-                <p>Feel free to reach out at <a class="link" href="mailto:rcheng1729@gmail.com"
-                        target="_blank">rcheng1792@gmail.com.</a></p>
-            </div>
-            <div class="svg-wrapper">
-                <svg viewBox="0 0 400 200" preserveAspectRatio="none" id="string-box">
-                    <path id="string" d="M 0,100 L 400,100"></path>
-                </svg>
-            </div>
-            <div>
-                <p>More test</p>
-            </div>
-        </div>
-    </div>
-    <div class="footer">
-        <div class="container">
-            <span>Inspired by <a class="link" href="https://kelvinzhang.com/" target="_blank">kelvinzhang.com</a>,
-                <a class="link" href="https://blog.olivierlarose.com/tutorials/svg-bezier-curve" target="_blank">line
-                    effect</a></span>
-        </div>
-    </div>
-    <script src="vibrate.js" defer></script>
-</body>
+        <div class="post-excerpt">{{ post.excerpt }}</div>
 
-</html>
+        <a href="{{ post.url | relative_url }}" class="read-more-link"
+            >Read More &raquo;</a
+        >
+    </article>
+    {% else %}
+    <p>No posts found.</p>
+    {% endfor %}
+</div>
