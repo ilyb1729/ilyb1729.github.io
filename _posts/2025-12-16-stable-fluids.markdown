@@ -6,7 +6,7 @@ categories: [] # Optional categories
 tags: [] # Optional tags
 ---
 
-I have recently been working on an implementation of the stable fluids algorithm and thought it might be good to collect some of the process and my thoughts since its been about a year since I last failed to implement a fluid sim for CS488.
+I have recently been working on an implementation of the stable fluids algorithm and thought it might be good to collect some of the process and my thoughts since its been about a year since I last attempted to implement a fluid sim for CS488 (Computer Graphics).
 
 # Intuition
 
