@@ -1,6 +1,6 @@
 ---
 layout: post
-title: stable fluids
+title: Stable Fluids
 date: 2025-12-16 00:00:00 -0700
 categories: [] # Optional categories
 tags: [] # Optional tags
