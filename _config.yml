@@ -6,7 +6,7 @@ github_username: ilyb1729 # Optional, for GitHub integration
 
 markdown: kramdown # Recommended for MathJax support
 kramdown:
-  math_engine: mathjax
+  math_engine: null
   syntax_highlighter: rouge # Or pygments
 
 plugins:
