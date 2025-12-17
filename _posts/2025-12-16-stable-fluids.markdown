@@ -17,11 +17,17 @@ For this, I will stay in 2D to keep notation simple and because my sim is implem
 We represent velocity as the vector $\mathbf{u} = (u, v)$, time step as $\Delta t$, viscosity as $\nu$, density as $\rho$, and external force as $\mathbf{f}$.
 
 In Stam, they present Navier-Stokes as
-$$\nabla \cdot \mathbf{u} = 0$$
+\\[
+\nabla \cdot \mathbf{u} = 0
+\\]
 and
-$$\frac{\partial \mathbf u}{\partial t} = -(\mathbf{u} \cdot \nabla)\mathbf{u} - \frac{1}{\rho} \nabla p + \nu \nabla^2\mathbf{u} + \mathbf{f}.$$
+\\[
+\frac{\partial \mathbf u}{\partial t} = -(\mathbf{u} \cdot \nabla)\mathbf{u} - \frac{1}{\rho} \nabla p + \nu \nabla^2\mathbf{u} + \mathbf{f}.
+\\]
 They introduce an operator $\mathbf{P}$ that lets you project a vector field into its divergence free part based on the Helmholtz-Hodge decomposition (not sure what this is). Then, we get
-$$\frac{\partial \mathbf u}{\partial t} = \mathbf{P}\left(-(\mathbf{u} \cdot \nabla)\mathbf{u} + \nu \nabla^2\mathbf{u} + \mathbf{f}\right).$$
+\\[
+\frac{\partial \mathbf u}{\partial t} = \mathbf{P}\left(-(\mathbf{u} \cdot \nabla)\mathbf{u} + \nu \nabla^2\mathbf{u} + \mathbf{f}\right).
+\\]
 In my code, I am using something called a MAC (marker-and-cells) grid. What this means is that vertical velocities are stored on the center horizontal edges and horizontal velocities are stored on the center of vertical edges. This supposedly helps with artifacts from axis aligned velocities and will change what the discretized formulas look like. For a grid of size $m \times n$, this means that the grid storing $u$ velocities is $m+1 \times n$ and the grid storing $v$ velocities is $m \times n + 1$.
 
 ## Steps
@@ -35,13 +41,17 @@ Consider the $\mathbf{f}$ on the RHS of Navier-Stokes. This is pretty self expla
 ### Advection
 
 Now we consider the $-(\mathbf{u} \cdot \nabla) \mathbf{u}$ part. It was confusing for me at first since I thought dotting a field and an operator doesn't type check, but if you just accept the abuse of notation, we can see that
-$$u \cdot \nabla \equiv u_1 \frac{\partial u}{\partial x} + u_2 \frac{\partial u}{\partial y} \equiv D_u.$$
+\\[
+u \cdot \nabla \equiv u_1 \frac{\partial u}{\partial x} + u_2 \frac{\partial u}{\partial y} \equiv D_u.
+\\]
 So this is telling us that velocity moves along its own field (direction derivative of velocity field along the velocity field).
 
 Stam shows how to compute the transfer of velocity through backtracking a simulated particle through the velocity field. They choose to backtrack through time instead of forward through time because it follows the implicit approach which supposedly makes it more numerically stable (implicit means something like the result is based on the outcome?).
 
 Anyways, the idea behind the backtracking is that if our particle has position $\mathbf{x}$, then we want to align the position of the particle with the diffeq
-$$\frac{\partial \mathbf{x}}{\partial t} = \mathbf{u}(x, t),$$
+\\[
+\frac{\partial \mathbf{x}}{\partial t} = \mathbf{u}(x, t),
+\\]
 backtrack through time, find the velocity at that point in space/time, and set the velocity at the particle's initial starting time to the newly computed velocity.
 
 #### Aside: Runge-Kutta
@@ -49,9 +59,13 @@ backtrack through time, find the velocity at that point in space/time, and set t
 Runge-Kutta allows you to solve for diffeqs of the form above. RK2 is the second order version and we present one possible form here. The convergence conditions seem pretty complicated, so I just ripped what works already.
 
 What we do is compute the velocity at the end point and move back based on the velocity
-$$x_{middle} = x_{end} - \frac{\Delta t}{2} v(x_{end}).$$
+\\[
+x_{middle} = x_{end} - \frac{\Delta t}{2} v(x_{end}).
+\\]
 Then we treat this velocity $v(x_{middle})$ as the estimated velocity over the interval from $0$ back in time to $-\Delta t$ and estimate
-$$x_{beginning} = x_{end} - \Delta t \cdot v(x_{middle}).$$
+\\[
+x_{beginning} = x_{end} - \Delta t \cdot v(x_{middle}).
+\\]
 This gives us the initial velocity $v(x_{beginning})$.
 
 ### Diffusion
@@ -59,33 +73,51 @@ This gives us the initial velocity $v(x_{beginning})$.
 Next we have $\nu \nabla^2 \mathbf{u}$. This just lets velocity spread from/to its neighbors depending on the viscosity of the fluid. Apparently it uses the second order partials since viscous force is related to the divergence of shear and shear is a first order derivative. I don't understand the physics as I live in a computer, not in the real world.
 
 If we use a finite difference approximation of a derivative, we can approximate
-$$\nabla^2 u = \frac{u_{up} - 2 u_{center} + u_{down} + u_{right} - 2 u_{center} + u_{left}}{\ell^2}.$$
+\\[
+\nabla^2 u = \frac{u_{up} - 2 u_{center} + u_{down} + u_{right} - 2 u_{center} + u_{left}}{\ell^2}.
+\\]
 $\ell$ is the length of a cell, or $1$ in my simulation to simplify things.
 
 Since we have
-$$\frac{\partial u}{\partial t} = \nu \nabla^2 \mathbf{u},$$
+\\[
+\frac{\partial u}{\partial t} = \nu \nabla^2 \mathbf{u},
+\\]
 we can rewrite in the implicit form to get
-$$\frac{\mathbf u^{n+1} - \mathbf u^n}{\Delta t} = \nu \nabla^2 \mathbf{u^{n+1}} \implies \mathbf u^{n+1} - \Delta t \cdot \nu \nabla^2 \mathbf u^{n+1} = \mathbf u^n .$$
+\\[
+\frac{\mathbf u^{n+1} - \mathbf u^n}{\Delta t} = \nu \nabla^2 \mathbf{u^{n+1}} \implies \mathbf u^{n+1} - \Delta t \cdot \nu \nabla^2 \mathbf u^{n+1} = \mathbf u^n .
+\\]
 This gives us a system of equations where the unknown are the velocities in $\mathbf u^{n+1}$.
 
 #### Aside: Gauss-Siedel
 
 Give a system in the form $Ax = b$, we can rewrite $A = L + U$ where $L$ is a lower triangular matrix and $U$ is a strictly upper triangular matrix (is this the right term? no nonzero elements on the diagonal). Then, we can rewrite
-$$(L + U)x = b \implies Lx = b - Ux.$$
+\\[
+(L + U)x = b \implies Lx = b - Ux.
+\\]
 As an approximation, we can let the LHS be future $x^{n+1}$ and RHS be the previous $x$, so we get the iteration
-$$Lx^{n+1} = b- Ux^{n}.$$
+\\[
+Lx^{n+1} = b- Ux^{n}.
+\\]
 We can now solve this with standard triangular matrix techniques. Convergence is not obvious. maybe something to learn in the future.
 
 ### Projection
 
 Handwavily, we start by considering the $-\frac{1}{\rho} \nabla p$ part of Navier-Stokes. Discretizing over our time step, we get $-\frac{\Delta t}{\rho}\nabla p$. Since we are assuming constant density for our simulation, we can botch the physical meaning and absorb the constants into $\nabla p$ due to linearity of partial derivatives ($p$ I think means pressure?) to get $\nabla \tilde p$ and we get
-$$u^{n+1} = u^* - \nabla \tilde{p}.$$
+\\[
+u^{n+1} = u^* - \nabla \tilde{p}.
+\\]
 We must have that $\nabla u = 0$ from Navier-Stokes for our new value $u^{n+1}$, so
-$$\nabla (u^* - \nabla \tilde{p}) = 0 \implies \nabla u^* = \nabla^2 \tilde{p}.$$
+\\[
+\nabla (u^* - \nabla \tilde{p}) = 0 \implies \nabla u^* = \nabla^2 \tilde{p}.
+\\]
 We know $u^*$ from our previous steps and $\tilde p$ is unknown. For this system to make sense, we evaluate it for each cell in our MAC grid. The gradient can be discretized as
-$$\nabla u = \frac{u_{up} - u_{down} + u_{right} - u_{left}}{\ell}$$
+\\[
+\nabla u = \frac{u_{up} - u_{down} + u_{right} - u_{left}}{\ell}
+\\]
 and the laplacian can be discretized with a derivative of a derivative as
-$$(\nabla^2 p)_{i, j} = \frac{p_{i+1, j} - 2p_{i, j} + p_{i-1, j} + p_{i, j+1} - 2p_{i,j} + p_{i,j-1}}{\ell^2}$$
+\\[
+(\nabla^2 p)_{i, j} = \frac{p_{i+1, j} - 2p_{i, j} + p_{i-1, j} + p_{i, j+1} - 2p_{i,j} + p_{i,j-1}}{\ell^2}
+\\]
 This gives us a system of equations with a variable per cell. We can solve this using the same Gauss-Siedel approach from the last step.
 
 ### Boundary Conditions
