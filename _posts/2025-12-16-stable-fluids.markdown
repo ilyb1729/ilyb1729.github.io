@@ -115,9 +115,9 @@ We know $u^*$ from our previous steps and $\tilde p$ is unknown. For this system
 \nabla u = \frac{u_{up} - u_{down} + u_{right} - u_{left}}{\ell}
 \\]
 and the laplacian can be discretized with a derivative of a derivative as
-\\[
-(\nabla^2 p)_{i, j} = \frac{p_{i+1, j} - 2p_{i, j} + p_{i-1, j} + p_{i, j+1} - 2p_{i,j} + p_{i,j-1}}{\ell^2}
-\\]
+
+$$(\nabla^2 p)_{i, j} = \frac{p_{i+1, j} - 2p*{i, j} + p*{i-1, j} + p*{i, j+1} - 2p*{i,j} + p\_{i,j-1}}{\ell^2}$$
+
 This gives us a system of equations with a variable per cell. We can solve this using the same Gauss-Siedel approach from the last step.
 
 ### Boundary Conditions
